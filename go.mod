@@ -22,3 +22,5 @@ require (
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
 )
+
+replace github.com/99designs/gqlgen => github.com/tmc/gqlgen v0.0.0-20200901050952-6383e6ad1368
