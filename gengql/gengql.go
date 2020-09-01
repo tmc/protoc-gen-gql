@@ -18,7 +18,6 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/tmc/protoc-gen-gql/internal/genenums"
 	"github.com/tmc/protoc-gen-gql/internal/genresolver"
-	"github.com/tmc/protoc-gen-gql/internal/genscalar"
 	"github.com/tmc/protoc-gen-gql/internal/genserver"
 	"github.com/tmc/protoc-gen-gql/internal/genunions"
 	"github.com/tmc/protoc-gen-gql/internal/gqlfmt"
@@ -203,26 +202,6 @@ func (tql *gengql) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Pack
 			tql.sdl = strings.Replace(schemaBuffer.String(), "type Query", "extend type Query", 1)
 		}
 	}
-
-	if len(tql.maps) > 0 {
-		f, err := os.Create(tql.path("scalars.go"))
-		must(err)
-		defer f.Close()
-		must(genscalar.Render(tql.maps, tql.mapImports, f))
-	}
-
-	f, err := os.Create(tql.path("gqlgen.yml"))
-	must(err)
-	defer f.Close()
-	tql.touchConfig(f)
-	if len(tql.enums) > 0 {
-		tql.bridgeEnums()
-	}
-	if len(tql.unions) > 0 {
-		tql.writeUnionMask()
-	}
-	tql.initGql(tql.svcname)
-
 	return tql.Artifacts()
 }
 
