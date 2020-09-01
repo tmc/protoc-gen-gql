@@ -7,31 +7,40 @@ type Query {
 
 type ByeResp {
 	one: Int!
+
 	two: Int!
+
 	three: [Int]!
+
 	four: [Int]!
+
 	traffic: Traffic!
+
 }
 
 type HelloResp {
 	one: String!
+
 	two: Boolean!
+
 	three: [String]!
+
 	four: [Boolean]!
+
 }
 
 input ByeReq {
-	one: Int!
-	two: Int!
-	three: [Int]!
-	four: [Int]!
+	one: Int
+	two: Int
+	three: [Int]
+	four: [Int]
 }
 
 input HelloReq {
-	one: String!
-	two: Boolean!
-	three: [String]!
-	four: [Boolean]!
+	one: String
+	two: Boolean
+	three: [String]
+	four: [Boolean]
 }
 
 enum Traffic {

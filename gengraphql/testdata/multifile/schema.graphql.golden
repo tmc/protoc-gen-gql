@@ -7,12 +7,14 @@ type Query {
 
 type HelloResp {
 	text: String!
+
 }
 
 type Second_SecondResp {
 	second: String!
+
 }
 
 input Second_SecondReq {
-	second: String!
+	second: String
 }

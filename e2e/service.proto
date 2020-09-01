@@ -3,7 +3,7 @@ package e2e;
 option go_package = ".;e2e";
 
 import "painters/painters.proto";
-import "options.proto";
+import "gengraphql/options/options.proto";
 
 service Service {
   rpc Hello(HelloReq) returns (HelloResp);

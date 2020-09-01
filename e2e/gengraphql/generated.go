@@ -389,71 +389,85 @@ type Mutation {
 
 type BreadResp {
 	answer: BreadRespAnswer!
+
 }
 
 type BreadRespAnswerName {
 	name: String!
+
 }
 
 type BreadRespAnswerToasted {
 	toasted: Boolean!
+
 }
 
 type ChangeMeResp {
 	name: String!
+
 	previous: Previous!
+
 	answer: ChangeMeRespAnswer!
+
 }
 
 type ChangeMeRespAnswerChanged {
 	changed: Boolean!
+
 }
 
 type ChangeMeRespAnswerNewName {
 	newName: String!
+
 }
 
 type HelloResp {
 	text: String!
+
 }
 
 type PaintersResp {
 	bestPainter: Painters_Painter!
+
 	allPainters: [String]!
+
 }
 
 type Painters_Painter {
 	name: String!
+
 }
 
 type TrafficJamResp {
 	next: TrafficLight!
+
 }
 
 type TranslateResp {
 	translations: Translations!
+
 }
 
 input BreadReq {
-	count: Int!
+	count: Int
 }
 
 input ChangeMeReq {
-	name: String!
-	previous: Previous!
+	name: String
+	previous: Previous
 }
 
 input HelloReq {
-	name: String!
+	name: String
 }
 
 input TrafficJamReq {
-	color: TrafficLight!
-	trafficLights: [TrafficLight]!
+	color: TrafficLight
+	trafficLights: [TrafficLight]
 }
 
 input TranslateReq {
-	words: Words!
+	words: Words
 }
 
 enum TrafficLight {
@@ -2455,7 +2469,7 @@ func (ec *executionContext) unmarshalInputBreadReq(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("count"))
-			it.Count, err = ec.unmarshalNInt2int64(ctx, v)
+			it.Count, err = ec.unmarshalOInt2int64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2475,7 +2489,7 @@ func (ec *executionContext) unmarshalInputChangeMeReq(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			it.Name, err = ec.unmarshalOString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2483,7 +2497,7 @@ func (ec *executionContext) unmarshalInputChangeMeReq(ctx context.Context, obj i
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("previous"))
-			it.Previous, err = ec.unmarshalNPrevious2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐPrevious(ctx, v)
+			it.Previous, err = ec.unmarshalOPrevious2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐPrevious(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2503,7 +2517,7 @@ func (ec *executionContext) unmarshalInputHelloReq(ctx context.Context, obj inte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			it.Name, err = ec.unmarshalOString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2523,7 +2537,7 @@ func (ec *executionContext) unmarshalInputTrafficJamReq(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("color"))
-			it.Color, err = ec.unmarshalNTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, v)
+			it.Color, err = ec.unmarshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2531,7 +2545,7 @@ func (ec *executionContext) unmarshalInputTrafficJamReq(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("trafficLights"))
-			it.TrafficLights, err = ec.unmarshalNTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, v)
+			it.TrafficLights, err = ec.unmarshalOTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2551,7 +2565,7 @@ func (ec *executionContext) unmarshalInputTranslateReq(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("words"))
-			it.Words, err = ec.unmarshalNWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx, v)
+			it.Words, err = ec.unmarshalOWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3416,21 +3430,6 @@ func (ec *executionContext) marshalNHelloResp2ᚖgithubᚗcomᚋtmcᚋprotocᚑg
 	return ec._HelloResp(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNInt2int64(ctx context.Context, v interface{}) (int64, error) {
-	res, err := graphql.UnmarshalInt64(v)
-	return res, graphql.WrapErrorWithInputPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
-	res := graphql.MarshalInt64(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) marshalNPaintersResp2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐPaintersResp(ctx context.Context, sel ast.SelectionSet, v e2e.PaintersResp) graphql.Marshaler {
 	return ec._PaintersResp(ctx, sel, &v)
 }
@@ -3539,64 +3538,6 @@ func (ec *executionContext) marshalNTrafficLight2githubᚗcomᚋtmcᚋprotocᚑg
 	return ec._TrafficLight(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalNTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx context.Context, v interface{}) ([]e2e.TrafficLight, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]e2e.TrafficLight, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, vSlice[i])
-		if err != nil {
-			return nil, graphql.WrapErrorWithInputPath(ctx, err)
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx context.Context, sel ast.SelectionSet, v []e2e.TrafficLight) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) marshalNTranslateResp2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTranslateResp(ctx context.Context, sel ast.SelectionSet, v e2e.TranslateResp) graphql.Marshaler {
 	return ec._TranslateResp(ctx, sel, &v)
 }
@@ -3618,22 +3559,6 @@ func (ec *executionContext) unmarshalNTranslations2githubᚗcomᚋtmcᚋprotoc�
 }
 
 func (ec *executionContext) marshalNTranslations2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐTranslations(ctx context.Context, sel ast.SelectionSet, v Translations) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) unmarshalNWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx context.Context, v interface{}) (Words, error) {
-	var res Words
-	err := res.UnmarshalGQL(v)
-	return res, graphql.WrapErrorWithInputPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx context.Context, sel ast.SelectionSet, v Words) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3920,6 +3845,31 @@ func (ec *executionContext) unmarshalOHelloReq2ᚖgithubᚗcomᚋtmcᚋprotocᚑ
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface{}) (int64, error) {
+	res, err := graphql.UnmarshalInt64(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
+	return graphql.MarshalInt64(v)
+}
+
+func (ec *executionContext) unmarshalOPrevious2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐPrevious(ctx context.Context, v interface{}) (Previous, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res Previous
+	err := res.UnmarshalGQL(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOPrevious2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐPrevious(ctx context.Context, sel ast.SelectionSet, v Previous) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
@@ -3961,12 +3911,92 @@ func (ec *executionContext) marshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑg
 	return ec._TrafficLight(ctx, sel, &v)
 }
 
+func (ec *executionContext) unmarshalOTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx context.Context, v interface{}) ([]e2e.TrafficLight, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]e2e.TrafficLight, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
+		res[i], err = ec.unmarshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, vSlice[i])
+		if err != nil {
+			return nil, graphql.WrapErrorWithInputPath(ctx, err)
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOTrafficLight2ᚕgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx context.Context, sel ast.SelectionSet, v []e2e.TrafficLight) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOTrafficLight2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTrafficLight(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) unmarshalOTranslateReq2ᚖgithubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚐTranslateReq(ctx context.Context, v interface{}) (*e2e.TranslateReq, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputTranslateReq(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx context.Context, v interface{}) (Words, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res Words
+	err := res.UnmarshalGQL(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOWords2githubᚗcomᚋtmcᚋprotocᚑgenᚑgraphqlᚋe2eᚋgengraphqlᚐWords(ctx context.Context, sel ast.SelectionSet, v Words) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

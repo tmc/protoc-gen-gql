@@ -10,10 +10,12 @@ type Mutation {
 
 type HelloMsg {
 	text: String!
+
 	OK: Boolean!
+
 }
 
 input HelloMsgInput {
-	text: String!
-	OK: Boolean!
+	text: String
+	OK: Boolean
 }

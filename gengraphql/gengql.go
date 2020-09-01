@@ -18,13 +18,13 @@ import (
 	"github.com/golang/protobuf/proto"
 	pgs "github.com/lyft/protoc-gen-star"
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
+	"github.com/tmc/protoc-gen-graphql/gengraphql/options"
 	"github.com/tmc/protoc-gen-graphql/internal/genenums"
 	"github.com/tmc/protoc-gen-graphql/internal/genresolver"
 	"github.com/tmc/protoc-gen-graphql/internal/genscalar"
 	"github.com/tmc/protoc-gen-graphql/internal/genserver"
 	"github.com/tmc/protoc-gen-graphql/internal/genunions"
 	"github.com/tmc/protoc-gen-graphql/internal/gqlfmt"
-	"github.com/tmc/protoc-gen-graphql/options"
 	"gopkg.in/yaml.v2"
 )
 

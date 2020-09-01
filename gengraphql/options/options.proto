@@ -1,6 +1,6 @@
 syntax = "proto3";
 package gengraphql.options;
-option go_package = "github.com/tmc/protoc-gen-graphql/options;options";
+option go_package = "github.com/tmc/protoc-gen-graphql/gengraphql/options;options";
 
 import "google/protobuf/descriptor.proto";
 

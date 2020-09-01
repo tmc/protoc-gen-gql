@@ -6,8 +6,9 @@ type Query {
 
 type HelloResp {
 	text: String!
+
 }
 
 input HelloReq {
-	name: String!
+	name: String
 }

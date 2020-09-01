@@ -20,7 +20,7 @@ models:
     - github.com/tmc/protoc-gen-graphql/e2e.BreadResp
   BreadRespAnswer:
     model:
-    - github.com/tmc/protoc-gen-graphql/e2e/./gengraphql.unionMask
+    - github.com/tmc/protoc-gen-graphql/e2e/gengraphql.unionMask
   BreadRespAnswerName:
     model:
     - github.com/tmc/protoc-gen-graphql/e2e.BreadResp_Name
@@ -35,7 +35,7 @@ models:
     - github.com/tmc/protoc-gen-graphql/e2e.ChangeMeResp
   ChangeMeRespAnswer:
     model:
-    - github.com/tmc/protoc-gen-graphql/e2e/./gengraphql.unionMask
+    - github.com/tmc/protoc-gen-graphql/e2e/gengraphql.unionMask
   ChangeMeRespAnswerChanged:
     model:
     - github.com/tmc/protoc-gen-graphql/e2e.ChangeMeResp_Changed

@@ -6,4 +6,5 @@ type Query {
 
 type HelloResp {
 	text: String!
+
 }

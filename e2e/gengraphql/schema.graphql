@@ -14,71 +14,85 @@ type Mutation {
 
 type BreadResp {
 	answer: BreadRespAnswer!
+
 }
 
 type BreadRespAnswerName {
 	name: String!
+
 }
 
 type BreadRespAnswerToasted {
 	toasted: Boolean!
+
 }
 
 type ChangeMeResp {
 	name: String!
+
 	previous: Previous!
+
 	answer: ChangeMeRespAnswer!
+
 }
 
 type ChangeMeRespAnswerChanged {
 	changed: Boolean!
+
 }
 
 type ChangeMeRespAnswerNewName {
 	newName: String!
+
 }
 
 type HelloResp {
 	text: String!
+
 }
 
 type PaintersResp {
 	bestPainter: Painters_Painter!
+
 	allPainters: [String]!
+
 }
 
 type Painters_Painter {
 	name: String!
+
 }
 
 type TrafficJamResp {
 	next: TrafficLight!
+
 }
 
 type TranslateResp {
 	translations: Translations!
+
 }
 
 input BreadReq {
-	count: Int!
+	count: Int
 }
 
 input ChangeMeReq {
-	name: String!
-	previous: Previous!
+	name: String
+	previous: Previous
 }
 
 input HelloReq {
-	name: String!
+	name: String
 }
 
 input TrafficJamReq {
-	color: TrafficLight!
-	trafficLights: [TrafficLight]!
+	color: TrafficLight
+	trafficLights: [TrafficLight]
 }
 
 input TranslateReq {
-	words: Words!
+	words: Words
 }
 
 enum TrafficLight {

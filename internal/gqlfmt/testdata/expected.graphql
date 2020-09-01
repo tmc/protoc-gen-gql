@@ -9,12 +9,16 @@ type Query {
 
 type GoodByeResp {
 	text: String!
+
 	anInt: Int!
+
 	aBool: Boolean!
+
 }
 
 type HelloResp {
 	text: String!
+
 }
 
 """
@@ -22,7 +26,9 @@ TrafficJamResp is the response to a traffic jam
 """
 type TrafficJamResp {
 	next: TrafficLight!
+
 	height: Float!
+
 }
 
 """
