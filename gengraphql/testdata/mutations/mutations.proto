@@ -1,0 +1,19 @@
+syntax = "proto3";
+package mixed;
+option go_package = "mixed";
+
+import "options.proto";
+
+service Service {
+    rpc Hello(HelloMsg) returns (HelloMsg);
+    rpc Goodbye(HelloMsg) returns (HelloMsg) {
+        option (gengraphql.options.rpc) = {
+            mutation: true;
+        };
+    };
+}
+
+message HelloMsg {
+    string text = 1;
+    bool OK = 2;
+}

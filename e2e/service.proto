@@ -12,7 +12,7 @@ service Service {
   rpc Translate(TranslateReq) returns (TranslateResp);
   rpc Bread(BreadReq) returns (BreadResp);
   rpc ChangeMe(ChangeMeReq) returns (ChangeMeResp) {
-    option (gengql.options.rpc) = {
+    option (gengraphql.options.rpc) = {
       mutation: true
     };
   };

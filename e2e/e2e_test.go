@@ -7,20 +7,20 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/tmc/protoc-gen-gql/e2e"
-	"github.com/tmc/protoc-gen-gql/e2e/painters"
-	"github.com/tmc/protoc-gen-gql/e2e/gengql"
+	"github.com/tmc/protoc-gen-graphql/e2e"
+	"github.com/tmc/protoc-gen-graphql/e2e/painters"
+	"github.com/tmc/protoc-gen-graphql/e2e/gengraphql"
 )
 
 func TestHello(t *testing.T) {
 	s := &service{helloResp: &e2e.HelloResp{Text: "hello"}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "q",
 		"variables": {
 			"req": {
-				"name": "gengql"
+				"name": "gengraphql"
 			}
 		},
 		"query": "query q($req: HelloReq) {\n  hello(req: $req) {\n    text  }\n}\n"
@@ -28,7 +28,7 @@ func TestHello(t *testing.T) {
 	req.Header.Add("Content-Type", "application/json")
 	h.ServeHTTP(w, req)
 
-	require.Equal(t, "gengql", s.helloReq.GetName(), "Expected GraphQL request to populate Twirp Object")
+	require.Equal(t, "gengraphql", s.helloReq.GetName(), "Expected GraphQL request to populate Twirp Object")
 
 	expected := `{"data":{"hello":{"text":"hello"}}}`
 
@@ -37,7 +37,7 @@ func TestHello(t *testing.T) {
 
 func TestTrafficJam(t *testing.T) {
 	s := &service{trafficJamResp: &e2e.TrafficJamResp{Next: e2e.TrafficLight_YELLOW}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "q",
@@ -75,7 +75,7 @@ func TestPainters(t *testing.T) {
 		BestPainter: &painters.Painter{Name: "picasso"},
 		AllPainters: []string{"one", "two"},
 	}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "q",
@@ -98,7 +98,7 @@ func TestTranslate(t *testing.T) {
 			},
 		},
 	}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "q",
@@ -123,7 +123,7 @@ func TestBread(t *testing.T) {
 	s := &service{breadResp: &e2e.BreadResp{
 		Answer: &e2e.BreadResp_Toasted{Toasted: true},
 	}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "q",
@@ -158,7 +158,7 @@ func TestMutations(t *testing.T) {
 			Changed: true,
 		},
 	}}
-	h := gengql.Handler(s, nil)
+	h := gengraphql.Handler(s, nil)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/", strings.NewReader(`{
 		"operationName": "m",

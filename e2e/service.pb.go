@@ -8,8 +8,8 @@ package e2e
 
 import (
 	proto "github.com/golang/protobuf/proto"
-	painters "github.com/tmc/protoc-gen-gql/e2e/painters"
-	_ "github.com/tmc/protoc-gen-gql/options"
+	painters "github.com/tmc/protoc-gen-graphql/e2e/painters"
+	_ "github.com/tmc/protoc-gen-graphql/options"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

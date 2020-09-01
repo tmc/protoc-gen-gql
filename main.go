@@ -6,15 +6,15 @@ import (
 	"os"
 
 	pgs "github.com/lyft/protoc-gen-star"
-	"github.com/tmc/protoc-gen-gql/gengql"
-	"github.com/tmc/protoc-gen-gql/internal/gocopy/modfile"
+	"github.com/tmc/protoc-gen-graphql/gengraphql"
+	"github.com/tmc/protoc-gen-graphql/internal/gocopy/modfile"
 )
 
 func main() {
 	modname := getImportPath()
 	log.SetOutput(ioutil.Discard)
 	pgs.Init(pgs.DebugEnv("DEBUG")).
-		RegisterModule(gengql.New(modname)).
+		RegisterModule(gengraphql.New(modname)).
 		Render()
 }
 

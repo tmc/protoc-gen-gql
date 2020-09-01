@@ -1,16 +1,16 @@
 syntax = "proto3";
-package gengql.options;
-option go_package = "github.com/tmc/protoc-gen-gql/options;options";
+package gengraphql.options;
+option go_package = "github.com/tmc/protoc-gen-graphql/options;options";
 
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MethodOptions {
-	// ID assigned by protobuf-global-extension-registry@google.com for gengql project.
+	// ID assigned by protobuf-global-extension-registry@google.com for gengraphql project.
 	RPC rpc = 1070;
 }
 
 extend google.protobuf.FileOptions {
-  // ID assigned by protobuf-global-extension-registry@google.com for gengql.
+  // ID assigned by protobuf-global-extension-registry@google.com for gengraphql.
   Schema schema = 1070;
 }
 

@@ -141,7 +141,7 @@ var file_options_proto_extTypes = []protoimpl.ExtensionInfo{
 		ExtendedType:  (*descriptor.MethodOptions)(nil),
 		ExtensionType: (*RPC)(nil),
 		Field:         1070,
-		Name:          "gengql.options.rpc",
+		Name:          "gengraphql.options.rpc",
 		Tag:           "bytes,1070,opt,name=rpc",
 		Filename:      "options.proto",
 	},
@@ -149,7 +149,7 @@ var file_options_proto_extTypes = []protoimpl.ExtensionInfo{
 		ExtendedType:  (*descriptor.FileOptions)(nil),
 		ExtensionType: (*Schema)(nil),
 		Field:         1070,
-		Name:          "gengql.options.schema",
+		Name:          "gengraphql.options.schema",
 		Tag:           "bytes,1070,opt,name=schema",
 		Filename:      "options.proto",
 	},
@@ -157,17 +157,17 @@ var file_options_proto_extTypes = []protoimpl.ExtensionInfo{
 
 // Extension fields to descriptor.MethodOptions.
 var (
-	// ID assigned by protobuf-global-extension-registry@google.com for gengql project.
+	// ID assigned by protobuf-global-extension-registry@google.com for gengraphql project.
 	//
-	// optional gengql.options.RPC rpc = 1070;
+	// optional gengraphql.options.RPC rpc = 1070;
 	E_Rpc = &file_options_proto_extTypes[0]
 )
 
 // Extension fields to descriptor.FileOptions.
 var (
-	// ID assigned by protobuf-global-extension-registry@google.com for gengql.
+	// ID assigned by protobuf-global-extension-registry@google.com for gengraphql.
 	//
-	// optional gengql.options.Schema schema = 1070;
+	// optional gengraphql.options.Schema schema = 1070;
 	E_Schema = &file_options_proto_extTypes[1]
 )
 
@@ -216,16 +216,16 @@ func file_options_proto_rawDescGZIP() []byte {
 
 var file_options_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_options_proto_goTypes = []interface{}{
-	(*Schema)(nil),                   // 0: gengql.options.Schema
-	(*RPC)(nil),                      // 1: gengql.options.RPC
+	(*Schema)(nil),                   // 0: gengraphql.options.Schema
+	(*RPC)(nil),                      // 1: gengraphql.options.RPC
 	(*descriptor.MethodOptions)(nil), // 2: google.protobuf.MethodOptions
 	(*descriptor.FileOptions)(nil),   // 3: google.protobuf.FileOptions
 }
 var file_options_proto_depIdxs = []int32{
-	2, // 0: gengql.options.rpc:extendee -> google.protobuf.MethodOptions
-	3, // 1: gengql.options.schema:extendee -> google.protobuf.FileOptions
-	1, // 2: gengql.options.rpc:type_name -> gengql.options.RPC
-	0, // 3: gengql.options.schema:type_name -> gengql.options.Schema
+	2, // 0: gengraphql.options.rpc:extendee -> google.protobuf.MethodOptions
+	3, // 1: gengraphql.options.schema:extendee -> google.protobuf.FileOptions
+	1, // 2: gengraphql.options.rpc:type_name -> gengraphql.options.RPC
+	0, // 3: gengraphql.options.schema:type_name -> gengraphql.options.Schema
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	2, // [2:4] is the sub-list for extension type_name

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package painters;
-option go_package = "github.com/tmc/protoc-gen-gql/e2e/painters";
+option go_package = "github.com/tmc/protoc-gen-graphql/e2e/painters";
 
 message Painter {
     string name = 1;

@@ -24,7 +24,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/tmc/protoc-gen-gql/internal/gocopy/semver"
+	"github.com/tmc/protoc-gen-graphql/internal/gocopy/semver"
 )
 
 // A Version is defined by a module path and version pair.

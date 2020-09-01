@@ -14,9 +14,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/tmc/protoc-gen-gql/internal/gocopy/lazyregexp"
-	"github.com/tmc/protoc-gen-gql/internal/gocopy/module"
-	"github.com/tmc/protoc-gen-gql/internal/gocopy/semver"
+	"github.com/tmc/protoc-gen-graphql/internal/gocopy/lazyregexp"
+	"github.com/tmc/protoc-gen-graphql/internal/gocopy/module"
+	"github.com/tmc/protoc-gen-graphql/internal/gocopy/semver"
 )
 
 // A File is the parsed, interpreted form of a go.mod file.
