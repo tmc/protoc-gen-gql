@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.12.2
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/golang/protobuf v1.4.1
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/lyft/protoc-gen-star v0.4.14

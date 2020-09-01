@@ -161,7 +161,7 @@ func (f *formatter) printTypes() {
 		f.print(" {\n")
 		for _, field := range typeDecl.Fields {
 			f.printDoc(field.Description, 1)
-			f.printf("\t%v: %v\n", field.Name, field.Type.String())
+			f.printf("\t%v: %v\n\n", field.Name, field.Type.String())
 		}
 		f.print("}\n")
 	}

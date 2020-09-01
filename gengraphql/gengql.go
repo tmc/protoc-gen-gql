@@ -156,7 +156,7 @@ func New(importPath string) pgs.Module {
 		tmpl:           template.Must(template.New("").Funcs(schemaFuncs).Parse(schemaTemplate)),
 		modname:        importPath,
 		ctx:            pgsgo.InitContext(pgs.ParseParameters("")),
-		destpkgname:    "./gengraphql",
+		destpkgname:    "gengraphql",
 		destimportpath: "",
 	}
 }
@@ -175,12 +175,11 @@ func (tql *gengraphql) InitContext(c pgs.BuildContext) {
 // the files to be generated. In this case, "/tmp/report.txt" will be created
 // outside of the normal protoc flow.
 func (tql *gengraphql) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
-	tql.destpkgname = tql.Parameters().StrDefault("dest", tql.destpkgname)
+	tql.destpkgname = tql.Parameters().StrDefault("output_path", tql.destpkgname)
 	tql.enableGqlgen, _ = tql.Parameters().BoolDefault("gqlgen", true)
-	os.MkdirAll(tql.destpkgname, 0777)
 
 	if len(targets) != 1 {
-		panic("only one proto file is supported at this moment; see https://gengraphql.dev/docs/multiple-services")
+		panic("only one proto file is supported at this moment")
 	}
 
 	for fileName, targetFile := range targets {
@@ -239,7 +238,7 @@ func (tql *gengraphql) pickServiceFromFile(svc string, f pgs.File) pgs.Service {
 		return f.Services()[0]
 	}
 	if svc == "" {
-		panic("service name must be provided if proto file has multiple services; see https://gengraphql.dev/docs/multiple-services")
+		panic("service name must be provided if proto file has multiple services")
 	}
 	for _, service := range f.Services() {
 		if svc == service.Name().String() {
@@ -453,7 +452,7 @@ func (tql *gengraphql) getMethods(protoMethods []pgs.Method) ([]*method, []*meth
 		if tql.hasResponseCombination(pm) {
 			m.Response = tql.setResponseCombination(pm)
 		} else {
-			m.Response = tql.getQualifiedName(pm.Output())
+			m.Response, _ = tql.getQualifiedName(pm.Output())
 		}
 		if tql.isMutation(pm) {
 			mutations = append(mutations, &m)
@@ -478,7 +477,7 @@ func (tql *gengraphql) setResponseCombination(m pgs.Method) string {
 		panic(typeName + " is not defined in proto file")
 	}
 	tql.setType(msg)
-	responseName := tql.getQualifiedName(m.Output())
+	responseName, _ := tql.getQualifiedName(m.Output())
 	unionName := responseName + "Set"
 	tql.unions[unionName] = &union{
 		Name:  unionName,
@@ -536,7 +535,10 @@ func getModifiers(pm pgs.Method) *options.RPC {
 }
 
 func (tql *gengraphql) setType(msg pgs.Message) {
-	typeName := tql.getQualifiedName(msg)
+	typeName, shouldSet := tql.getQualifiedName(msg)
+	if !shouldSet {
+		return
+	}
 	if _, ok := tql.types[typeName]; ok {
 		return
 	}
@@ -598,20 +600,43 @@ func (tql *gengraphql) getUnionFieldWrapperName(f pgs.Field) string {
 }
 
 func (tql *gengraphql) getUnionName(field pgs.OneOf) string {
-	return tql.getQualifiedName(field.Message()) + field.Name().UpperCamelCase().String()
+	n, _ := tql.getQualifiedName(field.Message())
+	return n + field.Name().UpperCamelCase().String()
 }
 
 // getQualifiedName returns the name that will be defined inside the GraphQL Schema File.
 // For messgae declarations that are part of the target .proto file, they will stay the same
 // but if it's part of an import like "google.protobuf.Timestamp" then we combine the package name
 // with the Message namd to ensure we have no clashes so it becomes: "google_protobuf_Timestamp"
-func (tql *gengraphql) getQualifiedName(msg pgs.Entity) string {
+func (tql *gengraphql) getQualifiedName(msg pgs.Entity) (string, bool) {
 	msgGoTypeName := tql.ctx.Name(msg).String()
 	if msg.Package() == tql.protopkg {
-		return msgGoTypeName
+		return msgGoTypeName, true
+	}
+	// TODO: make this better.
+	overrides := map[string]string{
+		"google.fhir.r4.core.String":  "String",
+		"google.fhir.r4.core.Boolean": "Boolean",
+	}
+	packagesConsideredLocal := map[string]bool{
+		// "google.fhir.stu3.proto": true,
+		"google.fhir.r4.core": true,
+	}
+	typesConsideredRemote := map[string]bool{
+		"String":  true,
+		"Boolean": true,
+	}
+
+	if o, ok := overrides[msg.Package().ProtoName().String()+"."+msgGoTypeName]; ok {
+		return o, false
+	}
+	if _, ok := typesConsideredRemote[msgGoTypeName]; !ok {
+		if _, ok := packagesConsideredLocal[msg.Package().ProtoName().String()]; ok {
+			return msgGoTypeName, true
+		}
 	}
 	pkgName := strings.ReplaceAll(msg.Package().ProtoName().String(), ".", "_")
-	return strings.Title(pkgName + "_" + msgGoTypeName)
+	return strings.Title(pkgName + "_" + msgGoTypeName), true
 }
 
 func (tql *gengraphql) setInput(msg pgs.Message) {
@@ -636,7 +661,7 @@ func (tql *gengraphql) setInput(msg pgs.Message) {
 // not allow an Input and a Type to be the same name, therefore
 // we will append an "Input" so that it becomes SomeMessageInput.
 func (tql *gengraphql) getInputName(msg pgs.Message) string {
-	msgName := tql.getQualifiedName(msg)
+	msgName, _ := tql.getQualifiedName(msg)
 	if _, ok := tql.types[msgName]; ok {
 		return msgName + "Input"
 	}
@@ -681,7 +706,7 @@ func (tql *gengraphql) deduceImportPath(msg pgs.Entity) string {
 }
 
 func (tql *gengraphql) setEnum(protoEnum pgs.Enum) {
-	name := tql.getQualifiedName(protoEnum)
+	name, _ := tql.getQualifiedName(protoEnum)
 	if _, ok := tql.enums[name]; ok {
 		return
 	}
@@ -750,7 +775,15 @@ func (tql *gengraphql) setMap(fieldName string, f pgs.Field) {
 
 func (tql *gengraphql) getFields(protoFields []pgs.Field, isType bool) []*serviceField {
 	fields := []*serviceField{}
+	// TODO: this is overly broad, imporove this.
+	ignoredFields := map[string]bool{
+		"extension":          true,
+		"modifier_extension": true,
+	}
 	for _, pf := range protoFields {
+		if ignored := ignoredFields[pf.Name().String()]; ignored {
+			continue
+		}
 		fields = append(fields, tql.getField(pf, isType))
 	}
 	return fields
@@ -771,6 +804,7 @@ func (tql *gengraphql) getField(pf pgs.Field, isType bool) *serviceField {
 	pt := pf.Type().ProtoType().Proto()
 	var tmp string
 	switch pt {
+	// TODO: no magic numbers
 	case 11:
 		if pf.Type().IsMap() {
 			tql.setMap(f.Name, pf)
@@ -783,7 +817,7 @@ func (tql *gengraphql) getField(pf pgs.Field, isType bool) *serviceField {
 				msg = pf.Type().Embed()
 			}
 			if isType {
-				tmp = tql.getQualifiedName(msg)
+				tmp, _ = tql.getQualifiedName(msg)
 				tql.setType(msg)
 			} else {
 				tmp = tql.getInputName(msg)
@@ -796,7 +830,7 @@ func (tql *gengraphql) getField(pf pgs.Field, isType bool) *serviceField {
 			e = pf.Type().Element().Enum()
 		}
 		tql.setEnum(e)
-		tmp = tql.getQualifiedName(e)
+		tmp, _ = tql.getQualifiedName(e)
 	case 12:
 		tmp = "ProtoBytes"
 		tql.setBytes(tmp, pf)
