@@ -5,8 +5,8 @@ option go_package = "github.com/tmc/protoc-gen-graphql/options;options";
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MethodOptions {
-	// ID assigned by protobuf-global-extension-registry@google.com for gengraphql project.
-	RPC rpc = 1070;
+  // ID assigned by protobuf-global-extension-registry@google.com for gengraphql project.
+  RPC rpc = 1070;
 }
 
 extend google.protobuf.FileOptions {
@@ -15,11 +15,11 @@ extend google.protobuf.FileOptions {
 }
 
 message Schema {
-	bool federated = 1;
+  bool federated = 1;
 }
 
 message RPC {
-	bool mutation = 1;
-	bool skip = 2;
-	repeated string respondsWith = 3;
+  bool mutation = 1;
+  bool skip = 2;
+  repeated string responds_with = 3;
 }

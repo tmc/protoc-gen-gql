@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -141,6 +142,7 @@ type enumData struct {
 
 // New configures the module with an instance of ModuleBase
 func New(importPath string) pgs.Module {
+
 	return &gengraphql{
 		ModuleBase:     &pgs.ModuleBase{},
 		inputs:         map[string]*serviceType{},
@@ -153,7 +155,7 @@ func New(importPath string) pgs.Module {
 		unionNames:     map[string]bool{},
 		responseUnions: map[string]string{},
 		gqlTypes:       gqlconfig.TypeMap{},
-		tmpl:           template.Must(template.New("").Funcs(schemaFuncs).Parse(schemaTemplate)),
+		tmpl:           template.Must(template.New("").Funcs(tmplFuncs()).Parse(schemaTemplate)),
 		modname:        importPath,
 		ctx:            pgsgo.InitContext(pgs.ParseParameters("")),
 		destpkgname:    "gengraphql",
@@ -361,6 +363,12 @@ func (tql *gengraphql) generateSchema(f pgs.File, out io.Writer) {
 
 	err := tql.tmpl.Execute(&buf, gqlFile)
 	must(err)
+	// TODO: allow output of invalid?
+	ioutil.WriteFile("/tmp/gengql.graphql", buf.Bytes(), 0644)
+	/*
+		fc, _ := ioutil.ReadFile("/tmp/gengql.graphql")
+		err = gqlfmt.Print(string(fc), out)
+	*/
 	err = gqlfmt.Print(buf.String(), out)
 	must(err)
 }
@@ -615,12 +623,13 @@ func (tql *gengraphql) getQualifiedName(msg pgs.Entity) (string, bool) {
 	}
 	// TODO: make this better.
 	overrides := map[string]string{
-		"google.fhir.r4.core.String":  "String",
-		"google.fhir.r4.core.Boolean": "Boolean",
+		"google.fhir.r4.core.String":    "String",
+		"google.fhir.r4.core.Boolean":   "Boolean",
+		"google.fhir.stu3.proto.String": "String",
 	}
 	packagesConsideredLocal := map[string]bool{
-		// "google.fhir.stu3.proto": true,
-		"google.fhir.r4.core": true,
+		"google.fhir.stu3.proto": true,
+		"google.fhir.r4.core":    true,
 	}
 	typesConsideredRemote := map[string]bool{
 		"String":  true,
@@ -640,11 +649,15 @@ func (tql *gengraphql) getQualifiedName(msg pgs.Entity) (string, bool) {
 }
 
 func (tql *gengraphql) setInput(msg pgs.Message) {
-	if _, ok := tql.inputs[tql.getInputName(msg)]; ok {
+	name, ok := tql.getInputName(msg)
+	if !ok {
+		return
+	}
+	if _, ok := tql.inputs[name]; ok {
 		return
 	}
 	var i serviceType
-	i.Name = tql.getInputName(msg)
+	i.Name = name
 	i.Doc = msg.SourceCodeInfo().LeadingComments()
 	tql.inputs[i.Name] = &i
 	tql.setGraphQLType(i.Name, msg)
@@ -660,12 +673,15 @@ func (tql *gengraphql) setInput(msg pgs.Message) {
 // used as an Output and not just Input, then GraphQL will
 // not allow an Input and a Type to be the same name, therefore
 // we will append an "Input" so that it becomes SomeMessageInput.
-func (tql *gengraphql) getInputName(msg pgs.Message) string {
-	msgName, _ := tql.getQualifiedName(msg)
-	if _, ok := tql.types[msgName]; ok {
-		return msgName + "Input"
+func (tql *gengraphql) getInputName(msg pgs.Message) (string, bool) {
+	msgName, ok := tql.getQualifiedName(msg)
+	if !ok {
+		return msgName, false
 	}
-	return msgName
+	if _, ok := tql.types[msgName]; ok {
+		return msgName + "Input", true
+	}
+	return msgName, true
 }
 
 func (tql *gengraphql) setGraphQLType(name string, msg pgs.Message) {
@@ -777,6 +793,7 @@ func (tql *gengraphql) getFields(protoFields []pgs.Field, isType bool) []*servic
 	fields := []*serviceField{}
 	// TODO: this is overly broad, imporove this.
 	ignoredFields := map[string]bool{
+		"contained":          true,
 		"extension":          true,
 		"modifier_extension": true,
 	}
@@ -820,7 +837,7 @@ func (tql *gengraphql) getField(pf pgs.Field, isType bool) *serviceField {
 				tmp, _ = tql.getQualifiedName(msg)
 				tql.setType(msg)
 			} else {
-				tmp = tql.getInputName(msg)
+				tmp, _ = tql.getInputName(msg)
 				tql.setInput(msg)
 			}
 		}
@@ -854,7 +871,8 @@ func (tql *gengraphql) getField(pf pgs.Field, isType bool) *serviceField {
 // the query will now have to look like this:
 // `someQuery: Response`
 func (tql *gengraphql) formatQueryInput(msg pgs.Message) string {
-	return fmt.Sprintf("(req: %v)", tql.getInputName(msg))
+	name, _ := tql.getInputName(msg)
+	return fmt.Sprintf("(req: %v)", name)
 }
 
 func (tql *gengraphql) path(s string) string {
