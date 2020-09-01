@@ -7,22 +7,22 @@ import (
 	"errors"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/tmc/protoc-gen-gql/e2e"
 	"github.com/vektah/gqlparser/v2/ast"
-	"pkg.go/enums"
 )
 
-func (ec *executionContext) _one(ctx context.Context, sel ast.SelectionSet, v *enums.one) graphql.Marshaler {
+func (ec *executionContext) _TrafficLight(ctx context.Context, sel ast.SelectionSet, v *e2e.TrafficLight) graphql.Marshaler {
 	return graphql.MarshalString((*v).String())
 }
 
-func (ec *executionContext) unmarshalInputone(ctx context.Context, v interface{}) (enums.one, error) {
+func (ec *executionContext) unmarshalInputTrafficLight(ctx context.Context, v interface{}) (e2e.TrafficLight, error) {
 	switch v := v.(type) {
 	case string:
-		intValue, ok := enums.one_value[v]
+		intValue, ok := e2e.TrafficLight_value[v]
 		if !ok {
 			return 0, errors.New("unknown value: " + v)
 		}
-		return enums.one(intValue), nil
+		return e2e.TrafficLight(intValue), nil
 	}
 	return 0, errors.New("wrong type")
 }

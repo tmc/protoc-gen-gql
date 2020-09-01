@@ -1,16 +1,16 @@
 syntax = "proto3";
-package twirpql.options;
-option go_package = "marwan.io/protoc-gen-twirpql/options;options";
+package gengql.options;
+option go_package = "github.com/tmc/protoc-gen-gql/options;options";
 
 import "google/protobuf/descriptor.proto";
 
 extend google.protobuf.MethodOptions {
-	// ID assigned by protobuf-global-extension-registry@google.com for twirpql project.
+	// ID assigned by protobuf-global-extension-registry@google.com for gengql project.
 	RPC rpc = 1070;
 }
 
 extend google.protobuf.FileOptions {
-  // ID assigned by protobuf-global-extension-registry@google.com for twirpql.
+  // ID assigned by protobuf-global-extension-registry@google.com for gengql.
   Schema schema = 1070;
 }
 

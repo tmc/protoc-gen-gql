@@ -6,15 +6,15 @@ import (
 	"os"
 
 	pgs "github.com/lyft/protoc-gen-star"
-	"marwan.io/protoc-gen-twirpql/internal/gocopy/modfile"
-	"marwan.io/protoc-gen-twirpql/twirpql"
+	"github.com/tmc/protoc-gen-gql/gengql"
+	"github.com/tmc/protoc-gen-gql/internal/gocopy/modfile"
 )
 
 func main() {
 	modname := getImportPath()
 	log.SetOutput(ioutil.Discard)
 	pgs.Init(pgs.DebugEnv("DEBUG")).
-		RegisterModule(twirpql.New(modname)).
+		RegisterModule(gengql.New(modname)).
 		Render()
 }
 

@@ -34,7 +34,7 @@ func (m *Plugin) GenerateCode(data *codegen.Data) error {
 	return templates.Render(templates.Options{
 		GeneratedHeader: true,
 		Template:        tmpl,
-		PackageName:     "twirpql", // TODO: dynamic package name
+		PackageName:     "gengql", // TODO: dynamic package name
 		Filename:        m.filename,
 		Data:            serverBuild,
 		Packages:        data.Config.Packages,
