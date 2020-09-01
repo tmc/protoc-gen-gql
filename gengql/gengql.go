@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -18,6 +19,7 @@ import (
 	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 	"github.com/tmc/protoc-gen-gql/internal/genenums"
 	"github.com/tmc/protoc-gen-gql/internal/genresolver"
+	"github.com/tmc/protoc-gen-gql/internal/genscalar"
 	"github.com/tmc/protoc-gen-gql/internal/genserver"
 	"github.com/tmc/protoc-gen-gql/internal/genunions"
 	"github.com/tmc/protoc-gen-gql/internal/gqlfmt"
@@ -118,6 +120,9 @@ type gengql struct {
 	// live. It defaults to a "gengql".
 	destpkgname string
 
+	// enableGqlgen controls whether full gqlgen-based servers are generated.
+	enableGqlgen bool
+
 	// is the import path that will import
 	// the gengql sub-package
 	destimportpath string
@@ -171,6 +176,7 @@ func (tql *gengql) InitContext(c pgs.BuildContext) {
 // outside of the normal protoc flow.
 func (tql *gengql) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Package) []pgs.Artifact {
 	tql.destpkgname = tql.Parameters().StrDefault("dest", tql.destpkgname)
+	tql.enableGqlgen, _ = tql.Parameters().BoolDefault("gqlgen", true)
 	os.MkdirAll(tql.destpkgname, 0777)
 
 	if len(targets) != 1 {
@@ -201,6 +207,26 @@ func (tql *gengql) Execute(targets map[string]pgs.File, pkgs map[string]pgs.Pack
 		if tql.isFederated(targetFile) {
 			tql.sdl = strings.Replace(schemaBuffer.String(), "type Query", "extend type Query", 1)
 		}
+	}
+	if tql.enableGqlgen {
+		if len(tql.maps) > 0 {
+			f, err := os.Create(tql.path("scalars.go"))
+			must(err)
+			defer f.Close()
+			must(genscalar.Render(tql.maps, tql.mapImports, f))
+		}
+
+		f, err := os.Create(tql.path("gqlgen.yml"))
+		must(err)
+		defer f.Close()
+		tql.touchConfig(f)
+		if len(tql.enums) > 0 {
+			tql.bridgeEnums()
+		}
+		if len(tql.unions) > 0 {
+			tql.writeUnionMask()
+		}
+		tql.initGql(tql.svcname)
 	}
 	return tql.Artifacts()
 }
@@ -234,7 +260,7 @@ func (tql *gengql) goList(dir string) string {
 		msg := fmt.Sprintf("go list failed: %v - stdout: %v - stderr: %v", err, string(pkgpath), stderr.String())
 		if strings.Contains(stderr.String(), "cannot find module providing package") {
 			msg = "go list failed. Make sure you have .go files where your .proto file is." +
-				"Also make sure to run the --go_out=. --gql_out=. plugins on a separate command before you run --gengql_out"
+				"Also make sure to run the --go_out=. plugin a separate command before you run --gql_out"
 		}
 		panic(msg)
 	}
@@ -255,24 +281,67 @@ func (tql *gengql) generateSchema(f pgs.File, out io.Writer) {
 	tql.gopkgname = tql.ctx.PackageName(f).String()
 	gqlFile := &file{}
 	gqlFile.Service = tql.getService(tql.svc)
-	for _, v := range tql.inputs {
-		gqlFile.Inputs = append(gqlFile.Inputs, v)
+	// inputs
+	// TODO: go2: this would be a good go2 generics cleanup
+	{
+		keys := []string{}
+		for k := range tql.inputs {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			gqlFile.Inputs = append(gqlFile.Inputs, tql.inputs[k])
+		}
 	}
-	for _, v := range tql.types {
-		gqlFile.Types = append(gqlFile.Types, v)
+	// types
+	{
+		keys := []string{}
+		for k := range tql.types {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			gqlFile.Types = append(gqlFile.Types, tql.types[k])
+		}
 	}
-	for k, v := range tql.enums {
-		gqlFile.Enums = append(gqlFile.Enums, &enums{
-			Name:   k,
-			Fields: v.Values,
-			Doc:    v.Doc,
-		})
+	// enums
+	{
+		keys := []string{}
+		for k := range tql.enums {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			v := tql.enums[k]
+			gqlFile.Enums = append(gqlFile.Enums, &enums{
+				Name:   k,
+				Fields: v.Values,
+				Doc:    v.Doc,
+			})
+		}
 	}
-	for k := range tql.maps {
-		gqlFile.Scalars = append(gqlFile.Scalars, k)
+	// scalars (maps)
+	{
+		keys := []string{}
+		for k := range tql.maps {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			gqlFile.Scalars = append(gqlFile.Scalars, k)
+		}
 	}
-	for _, v := range tql.unions {
-		gqlFile.Unions = append(gqlFile.Unions, v)
+	// unions
+	{
+		keys := []string{}
+		for k := range tql.unions {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		for _, k := range keys {
+			gqlFile.Unions = append(gqlFile.Unions, tql.unions[k])
+
+		}
 	}
 	if tql.isFederated(f) {
 		gqlFile.Service.Methods = append(gqlFile.Service.Methods, &method{
@@ -416,7 +485,7 @@ func (tql *gengql) setResponseCombination(m pgs.Method) string {
 		Types: []string{responseName, typeName},
 	}
 	tql.responseUnions[m.Name().UpperCamelCase().String()] = typeName
-	importpath := tql.destimportpath + "/gengql"
+	importpath := tql.destimportpath + "/" + tql.destpkgname
 	tql.gqlTypes[unionName] = gqlconfig.TypeMapEntry{
 		Model: gqlconfig.StringList{importpath + "." + "unionMask"},
 	}
@@ -495,7 +564,7 @@ func (tql *gengql) getUnionFields(msg pgs.Message) []*serviceField {
 			Name:  unionName,
 			Types: unionTypes,
 		}
-		importpath := tql.destimportpath + "/gengql"
+		importpath := tql.destimportpath + "/" + tql.destpkgname
 		tql.gqlTypes[unionName] = gqlconfig.TypeMapEntry{
 			Model: gqlconfig.StringList{importpath + "." + "unionMask"},
 		}
@@ -775,8 +844,8 @@ var protoTypesToGqlTypes = map[string]string{
 	// "TYPE_ENUM": "", // mapped to its sibling type
 	// "TYPE_SFIXED32": "",
 	// "TYPE_SFIXED64": "",
-	// "TYPE_SINT32": "",
-	// "TYPE_SINT64": "",
+	"TYPE_SINT32": "Int",
+	"TYPE_SINT64": "Int",
 }
 
 func must(err error) {
